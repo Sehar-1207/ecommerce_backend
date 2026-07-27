@@ -22,7 +22,6 @@ app.use('/api/products', productRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// 🎯 Binds Express to listen on both localhost IPv4 and IPv6
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

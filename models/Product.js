@@ -6,6 +6,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
+      index: true,
     },
     title: {
       type: String,
@@ -35,16 +36,18 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Please add stock quantity"],
       min: 0,
+      default: 0,
     },
     brand: {
       type: String,
-      required: true,
       trim: true,
+      default: "Unbranded",
     },
     category: {
       type: String,
       required: true,
       index: true,
+      lowercase: true,
     },
     thumbnail: {
       type: String,
@@ -56,9 +59,11 @@ const productSchema = new mongoose.Schema(
     },
     warrantyInformation: {
       type: String,
+      default: "1 Year Standard Warranty",
     },
     shippingInformation: {
       type: String,
+      default: "Ships in 3-5 business days",
     },
   },
   {
@@ -66,6 +71,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.model("Product", productSchema);
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 
 export default Product;

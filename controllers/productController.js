@@ -6,7 +6,7 @@ export const getAllProducts = async (req, res) => {
     const skip = parseInt(req.query.skip, 10) || 0;
 
     const total = await Product.countDocuments();
-    const products = await Product.find().skip(skip).limit(limit);
+    const products = await Product.find().skip(skip).limit(limit).lean();
 
     res.status(200).json({
       products,
@@ -24,7 +24,7 @@ export const getProductById = async (req, res) => {
     const { id } = req.params;
     const query = !isNaN(Number(id)) ? { id: Number(id) } : { _id: id };
 
-    const product = await Product.findOne(query);
+    const product = await Product.findOne(query).lean();
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -45,21 +45,21 @@ export const getCategories = async (req, res) => {
   }
 };
 
-
 export const getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = parseInt(req.query.skip, 10) || 0;
 
-    const filter = { category: { $regex: new RegExp(`^${category}$`, "i") } };
+    const filter = { category: { $regex: new RegExp(`^${category.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}$`, "i") } };
 
     const total = await Product.countDocuments(filter);
-    const products = await Product.find(filter).limit(limit);
+    const products = await Product.find(filter).skip(skip).limit(limit).lean();
 
     res.status(200).json({
       products,
       total,
-      skip: 0,
+      skip,
       limit: limit || total,
     });
   } catch (error) {
@@ -69,6 +69,11 @@ export const getProductsByCategory = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
+    if (!req.body.id) {
+      const lastProduct = await Product.findOne().sort({ id: -1 }).select("id").lean();
+      req.body.id = lastProduct && typeof lastProduct.id === "number" ? lastProduct.id + 1 : 1;
+    }
+
     const product = await Product.create(req.body);
     res.status(201).json(product);
   } catch (error) {

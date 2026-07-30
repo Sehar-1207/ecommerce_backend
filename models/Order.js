@@ -20,7 +20,9 @@ const orderSchema = new mongoose.Schema(
       }
     ],
     total: { type: Number, required: true },
-    paymentMethod: { type: String, enum: ["cod", "card"], required: true },
+    paymentMethod: { type: String, enum: ["cod", "stripe"], required: true },
+    paymentStatus: { type: String, enum: ["N/A", "Pending", "Paid", "Failed"], default: "N/A" },
+    stripeSessionId: { type: String },
     status: { type: String, default: "Processing" }
   },
   { timestamps: true }

@@ -1,12 +1,13 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
+dotenv.config();
+import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
 import cartRouter from './routes/cartRoutes.js';
 import orderRouter from './routes/orderRoutes.js';
-dotenv.config();
+import addressRoutes from "./routes/addressRoutes.js";
 connectDB();
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart',cartRouter)
 app.use('/api/orders',orderRouter);
+app.use('/api/addresses', addressRoutes);
 
 const PORT = process.env.PORT || 5000;
 

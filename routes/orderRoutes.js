@@ -1,9 +1,11 @@
 import express from "express";
-import { createOrder, getUserOrders } from "../controllers/orderController.js";
+import { createOrder, getUserOrders, verifyStripePayment } from "../controllers/orderController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createOrder);
-router.get("/:userId", getUserOrders);
+router.post("/", protect, createOrder);
+router.get("/", protect, getUserOrders);
+router.get("/verify-payment", protect, verifyStripePayment);
 
 export default router;
